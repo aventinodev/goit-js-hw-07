@@ -3,13 +3,13 @@ import { galleryItems } from "./gallery-items.js";
 
 const galleryRef = document.querySelector(".gallery");
 // створення розмітки
-const makeUpImageRef = (galleryItem) => {
+const markUpImageRef = (galleryItem) => {
   const { preview, original, description } = galleryItem;
 
   return `<div class="gallery__item "><a class="gallery__link" href="${original}"><img class="gallery__image" src="${preview}" data-source="${original}" alt="${description}"/></a></div>`;
 };
 
-const makeImageGalleryMarkUp = galleryItems.map(makeUpImageRef).join("");
+const makeImageGalleryMarkUp = galleryItems.map(markUpImageRef).join("");
 
 galleryRef.insertAdjacentHTML("beforeend", makeImageGalleryMarkUp);
 
@@ -20,7 +20,7 @@ let selectedImageSourse = null;
 function onClickGetSourceImageGallery(event) {
   event.preventDefault();
 
-  if (event.target.nodeName !== "IMG") {
+  if (!event.target.classList.contains("gallery__image")) {
     return;
   }
 
