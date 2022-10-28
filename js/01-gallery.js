@@ -35,6 +35,10 @@ function onClickGetSourceImageGallery(event) {
 }
 
 galleryRef.onclick = () => {
+  // думаю, що сюди треба теж додати  перевірку, але event ми
+  // if (!event.target.classList.contains("gallery__image")) {
+  //   return;
+  // }
   basicLightbox
     .create(
       `
