@@ -1,15 +1,12 @@
 import { galleryItems } from "./gallery-items.js";
 // Change code below this line
-
-const galleryRef = document.querySelector(".gallery");
-
-const markupGallery = createImageGalleryMarkUp(galleryItems);
-
 let activeImageSourse = null;
+const galleryRef = document.querySelector(".gallery");
+const markupGallery = createImageGalleryMarkUp(galleryItems);
 
 galleryRef.insertAdjacentHTML("beforeend", markupGallery);
 
-galleryRef.addEventListener("click", onClickGetSourceImageGallery);
+galleryRef.addEventListener("click", getImageSourse);
 
 function createImageGalleryMarkUp(galleryItems) {
   return galleryItems
@@ -20,46 +17,34 @@ function createImageGalleryMarkUp(galleryItems) {
     .join("");
 }
 
-function onClickGetSourceImageGallery(event) {
+function getImageSourse(event) {
   event.preventDefault();
   const activeImage = event.target;
-  removeClassFromActiveImage();
-  addClassToActiveImage(activeImage);
-  getImageSourse(activeImage);
+  activeImageSourse = activeImage.dataset.source;
+  onCreateModal(event);
 }
-function removeClassFromActiveImage() {
-  const currentActiveImage = document.querySelector(".gallery__image--active");
 
-  if (currentActiveImage) {
-    currentActiveImage.classList.remove("gallery__image--active");
-  }
-}
-function addClassToActiveImage(image) {
-  image.classList.add("gallery__image--active");
-}
-function getImageSourse(image) {
-  activeImageSourse = image.dataset.source;
-}
-galleryRef.onclick = (event) => {
+function onCreateModal(event) {
   if (!event.target.classList.contains("gallery__image")) {
     return;
   }
-  basicLightbox
-    .create(
-      `
-		<img width="1280" height="852" src="${activeImageSourse}">
-	`
-    )
-    .show();
-  window.addEventListener("keydown", onClickEscape);
-};
 
-// window.removeEventListener("keydown", onClickEscape);
+  const instance = basicLightbox.create(
+    `
+		<img width="1280" height="852" src="${activeImageSourse}">`
+  );
 
-function onClickEscape(event) {
-  const isEscape = event.code === "Escape";
-  if (isEscape) {
-    console.log(event.code);
-    // galleryRef.onclick = () => basicLightbox.close();
+  instance.show(() => {
+    window.addEventListener("keydown", onClickEscape);
+  });
+
+  function onClickEscape(event) {
+    const isEscape = event.code === "Escape";
+    if (isEscape) {
+      instance.close(() => {
+        window.removeEventListener("keydown", onClickEscape);
+      });
+    }
   }
 }
+console.log(galleryRef);
