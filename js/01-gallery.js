@@ -1,14 +1,13 @@
 import { galleryItems } from "./gallery-items.js";
 // Change code below this line
 let activeImageSourse = null;
+let instance = null;
 const galleryRef = document.querySelector(".gallery");
-const markupGallery = createImageGalleryMarkUp(galleryItems);
+const markupGallery = createGalleryMarkUp(galleryItems);
 
 galleryRef.insertAdjacentHTML("beforeend", markupGallery);
 
-galleryRef.addEventListener("click", getImageSourse);
-
-function createImageGalleryMarkUp(galleryItems) {
+function createGalleryMarkUp(galleryItems) {
   return galleryItems
     .map(
       ({ preview, original, description }) =>
@@ -16,35 +15,40 @@ function createImageGalleryMarkUp(galleryItems) {
     )
     .join("");
 }
+galleryRef.addEventListener("click", onClickImageGallery);
 
-function getImageSourse(event) {
+function onClickImageGallery(event) {
   event.preventDefault();
-  const activeImage = event.target;
-  activeImageSourse = activeImage.dataset.source;
-  onCreateModal(event);
-}
 
-function onCreateModal(event) {
   if (!event.target.classList.contains("gallery__image")) {
     return;
   }
+  activeImageSourse = getImageSourse(event);
+  openModal(activeImageSourse);
+}
+function getImageSourse(event) {
+  return event.target.dataset.source;
+}
 
-  const instance = basicLightbox.create(
+function openModal() {
+  instance = basicLightbox.create(
     `
 		<img width="1280" height="852" src="${activeImageSourse}">`
   );
-
   instance.show(() => {
-    window.addEventListener("keydown", onClickEscape);
+    window.addEventListener("keydown", closeModalbyEscape);
   });
+}
+function closeModal() {
+  instance.close(() => {
+    window.removeEventListener("keydown", closeModalbyEscape);
+  });
+}
 
-  function onClickEscape(event) {
-    const isEscape = event.code === "Escape";
-    if (isEscape) {
-      instance.close(() => {
-        window.removeEventListener("keydown", onClickEscape);
-      });
-    }
+function closeModalbyEscape(event) {
+  const isEscape = event.code === "Escape";
+  if (isEscape) {
+    closeModal();
   }
 }
 console.log(galleryRef);
